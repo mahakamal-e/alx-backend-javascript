@@ -5,11 +5,10 @@ function getResponseFromAPI() {
       if (success) {
         resolve('Mock API response');
       } else {
-        reject('Error: API request failed');
+        reject(new Error('Error: API request failed'));
       }
     }, 1000);
   });
 }
 
 export default getResponseFromAPI;
-
