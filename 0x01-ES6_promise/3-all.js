@@ -1,14 +1,9 @@
 import { uploadPhoto, createUser } from './utils';
 
-function handleProfileSignup() {
-  Promise.all([uploadPhoto(), createUser()])
-    .then(([photoResponse, user]) => {
-      const { body: photo } = photoResponse; // Destructuring to get 'body' from photoResponse
-      console.log(`${photo} ${user.firstName} ${user.lastName}`);
+export default function handleProfileSignup() {
+  return Promise.all([uploadPhoto(), createUser()])
+    .then((values) => {
+      console.log(`${values[0].body} ${values[1].firstName} ${values[1].lastName}`);
     })
-    .catch(() => {
-      console.log('Signup system offline');
-    });
+    .catch(() => console.log('Signup system offline'));
 }
-
-export default handleProfileSignup;
