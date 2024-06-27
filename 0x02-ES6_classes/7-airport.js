@@ -8,11 +8,27 @@ export default class Airport {
     return this._name;
   }
 
+  set name(newName) {
+    if (typeof newName !== 'string') {
+      throw new TypeError('Name must be string');
+    }
+
+    this._name = newName;
+  }
+
   get code() {
     return this._code;
   }
 
-  toString() {
-    return `Airport [${this._code}] { _name: '${this._name}', _code: '${this._code}' }`;
+  set code(newCode) {
+    if (typeof newCode !== 'string') {
+      throw new TypeError('Code must be string');
+    }
+
+    this._code = newCode;
+  }
+
+  get [Symbol.toStringTag]() {
+    return this._code;
   }
 }
