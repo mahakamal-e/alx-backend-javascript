@@ -29,3 +29,11 @@ yarn-error.log*
 .idea
 .vscode
 
+# Babel configuration
+babel.config.js
+
+# npm package lock file
+package-lock.json
+
+# npm package descriptor file
+package.json
