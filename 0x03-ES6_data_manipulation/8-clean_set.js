@@ -3,7 +3,7 @@ const cleanSet = (set, startString) => {
     return '';
   }
   const result = Array.from(set)
-    .filter((value) => typeof element === 'string' && value.startsWith(startString))
+    .filter((value) => typeof value === 'string' && value.startsWith(startString))
     .map((value) => value.substring(startString.length))
     .join('-');
 
