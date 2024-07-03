@@ -7,13 +7,39 @@ interface Teacher {
     [key: string]: any;
 }
 
-// Create a Teacher object
-const teacher: Teacher = {
-    firstName: "Maha",
-    lastName: "Kamal",
-    fullTimeEmployee: true,
-    location: "New York",
-    contract: true,
+type ContractAttributes = {
+  [key: string]: any;
+} & Teacher;
+
+interface Directors extends Teacher {
+  numberOfReports: number;
+}
+
+interface printTeacherFunction {
+  (firstName: string, lastName: string): string;
+}
+
+interface StudentClassConstructor {
+  new (firstName: string, lastName: string): StudentClass;
+}
+
+interface StudentClassInterface {
+  workOnHomework(): string;
+  displayName(): string;
+}
+const printTeacher: printTeacherFunction = (firstName, lastName) => {
+  return `${firstName.charAt(0)}. ${lastName}`;
 };
 
-console.log(teacher);
+// Class
+class StudentClass implements StudentClassInterface {
+  constructor(public firstName: string, public lastName: string) {}
+
+  workOnHomework(): string {
+    return 'Currently working';
+  }
+
+  displayName(): string {
+    return this.firstName;
+  }
+}
