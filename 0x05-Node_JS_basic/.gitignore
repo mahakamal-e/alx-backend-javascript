@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+npm-debug.log
+
+# Logs
+logs/
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Environment Variables
+.env
+
+# Specific project files
+package.json
+babel.config.js
+.eslintrc.js
+
+# VSCode settings
+.vscode/
