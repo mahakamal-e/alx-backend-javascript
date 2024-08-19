@@ -1,9 +1,10 @@
 const fs = require('fs');
+const path = require('path');
 
-function countStudents(path) {
+function countStudents(filePath) {
   try {
     // Read the CSV file synchronously
-    const data = fs.readFileSync(path, 'utf8');
+    const data = fs.readFileSync(filePath, 'utf8');
 
     // Split the data into lines
     const lines = data.trim().split('\n');
@@ -17,16 +18,18 @@ function countStudents(path) {
 
     // Process each row
     rows.forEach((row) => {
-      const [firstname, field] = row.split(',');
+      const [firstname, , , field] = row.split(',');
 
-      // Skip empty lines
+      // Skip empty lines and rows with missing data
       if (!firstname || !field) return;
 
+      // Check if the field is already in fieldCounts
       if (!fieldCounts[field]) {
         fieldCounts[field] = 0;
         fieldNames[field] = [];
       }
 
+      // Increment the count and add the name
       fieldCounts[field]++;
       fieldNames[field].push(firstname);
     });
@@ -39,7 +42,8 @@ function countStudents(path) {
 
     // Log students count by field and list of names
     for (const [field, count] of Object.entries(fieldCounts)) {
-      console.log(`Number of students in ${field}: ${count}. List: ${fieldNames[field].join(', ')}`);
+      const namesList = fieldNames[field].join(', ');
+      console.log(`Number of students in ${field}: ${count}. List: ${namesList}`);
     }
 
   } catch (error) {
