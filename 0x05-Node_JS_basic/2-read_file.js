@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 
 function countStudents(filePath) {
   try {
@@ -10,7 +9,7 @@ function countStudents(filePath) {
     const lines = data.trim().split('\n');
 
     // Extract header and rows
-    const [header, ...rows] = lines;
+    const [/* header */, ...rows] = lines; // Ignore header
 
     // Initialize data structures
     const fieldCounts = {};
@@ -30,12 +29,12 @@ function countStudents(filePath) {
       }
 
       // Increment the count and add the name
-      fieldCounts[field]++;
+      fieldCounts[field] += 1;
       fieldNames[field].push(firstname);
     });
 
     // Calculate total number of students
-    const totalStudents = rows.length;
+    const totalStudents = rows.filter((row) => row.trim() !== '').length; // Only count non-empty rows
 
     // Log total number of students
     console.log(`Number of students: ${totalStudents}`);
@@ -45,7 +44,6 @@ function countStudents(filePath) {
       const namesList = fieldNames[field].join(', ');
       console.log(`Number of students in ${field}: ${count}. List: ${namesList}`);
     }
-
   } catch (error) {
     // Handle errors (e.g., file not found)
     throw new Error('Cannot load the database');
