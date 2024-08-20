@@ -1,43 +1,35 @@
 import readDatabase from '../utils';
-import { dbName } from '../server';
 
 class StudentsController {
   static getAllStudents(request, response) {
-    readDatabase(dbName)
+    readDatabase(process.argv[2])
       .then((data) => {
-        const responseText = ['This is the list of our students'];
-        const sortedData = Object.fromEntries(
-          Object.entries(data).sort((a, b) => a[0].localeCompare(b[0])),
-        );
-
-        for (const [key, value] of Object.entries(sortedData)) {
-          responseText.push(`Number of students in ${key}: ${value.length}. List: ${value.join(', ')}`);
+        let output = 'This is the list of our students\n';
+        for (const key in data) {
+          if (Object.hasOwnProperty.call(data, key)) {
+            output += `Number of students in ${key}: ${data[key].length}. List: ${data[key].join(', ')}\n`;
+          }
         }
-
-        response.statusCode = 200;
-        response.send(responseText.join('\n'));
-      }).catch((error) => {
-        response.statusCode = 500;
-        response.send(error.message);
+        return response.status(200).send(output);
+      })
+      .catch(() => {
+        response.status(500).send('Cannot load the database');
       });
   }
 
   static getAllStudentsByMajor(request, response) {
-    const { major } = request.params;
-    if (major !== 'CS' && major !== 'SWE') {
-      response.statusCode = 500;
-      response.send('Major parameter must be CS or SWE');
-      return;
+    if (!['CS', 'SWE'].includes(request.params.major)) {
+      return response.status(500).send('Major parameter must be CS or SWE');
     }
-
-    readDatabase(dbName)
+    return readDatabase(process.argv[2])
       .then((data) => {
-        const firstNames = data[major];
-        response.statusCode = 200;
-        response.send(`List: ${firstNames.join(', ')}`);
-      }).catch((error) => {
-        response.statusCode = 500;
-        response.send(error.message);
+        if (!data[request.params.major]) {
+          return response.status(500).send('Cannot load the database');
+        }
+        return response.status(200).send(`List: ${data[request.params.major].join(', ')}`);
+      })
+      .catch(() => {
+        response.status(500).send('Cannot load the database');
       });
   }
 }
