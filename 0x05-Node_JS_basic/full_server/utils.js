@@ -1,35 +1,37 @@
-// full_server/utils.js
-import fs from 'fs/promises';
+import fs from 'fs';
 
-export const readDatabase = async (filePath) => {
-  try {
-    const data = await fs.readFile(filePath, 'utf-8');
-    const rows = data.split('\n').filter(row => row.trim() !== '');
-    const [header, ...content] = rows;
+const parseStudentsByField = (dataList) => {
+  const labelsList = dataList[0].split(',');
+  const fieldIdx = labelsList.indexOf('field');
+  const firstNameIdx = labelsList.indexOf('firstname');
 
-    const [fieldIndex, firstnameIndex] = header.split(',').reduce((indexes, column, idx) => {
-      if (column === 'field') indexes[0] = idx;
-      if (column === 'firstname') indexes[1] = idx;
-      return indexes;
-    }, [-1, -1]);
+  const studentsByField = {};
 
-    if (fieldIndex === -1 || firstnameIndex === -1) {
-      throw new Error('Invalid database format');
+  for (let i = 1; i < dataList.length; i += 1) {
+    // eslint-disable-next-line no-continue
+    if (dataList[i] === '') continue;
+
+    const studentList = dataList[i].split(',');
+    const fieldName = studentList[fieldIdx];
+    if (!studentsByField[fieldName]) studentsByField[fieldName] = [];
+    studentsByField[fieldName].push(studentList[firstNameIdx]);
+  }
+
+  return studentsByField;
+};
+
+const readDatabase = (path) => new Promise((resolve, reject) => {
+  fs.readFile(path, 'utf-8', (error, data) => {
+    if (error) {
+      reject(new Error('Cannot load the database'));
+      return;
     }
 
-    const studentsByField = {};
-    content.forEach(row => {
-      const [field, firstname] = row.split(',').filter(Boolean);
-      if (field && firstname) {
-        if (!studentsByField[field]) {
-          studentsByField[field] = [];
-        }
-        studentsByField[field].push(firstname);
-      }
-    });
+    const dataList = data.split('\n');
+    const studentsByField = parseStudentsByField(dataList);
 
-    return studentsByField;
-  } catch (error) {
-    throw new Error('Cannot load the database');
-  }
-};
+    resolve(studentsByField);
+  });
+});
+
+export default readDatabase;
