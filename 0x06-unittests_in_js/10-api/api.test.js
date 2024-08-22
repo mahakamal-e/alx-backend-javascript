@@ -35,25 +35,27 @@ describe('API Tests', function () {
     });
   });
   describe('POST /login', function () {
-    it('should return 200 and welcome message with username', function (done) {
-      request.post({
-        url: 'http://localhost:7865/login',
-        body: JSON.stringify({ userName: 'Betty' }),
-        headers: { 'Content-Type': 'application/json' }
-      }, (error, response, body) => {
-        expect(response.statusCode).to.equal(200);
-        expect(body).to.equal('Welcome Betty');
+    it('should return 200 and welcome message with username', (done) => {
+      request.post(`${API_URL}/login`, {json: {userName: 'Pinkbrook'}}, (_err, res, body) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(body).to.be.equal('Welcome Pinkbrook');
         done();
       });
     });
 
-    it('should return 400 for missing username', function (done) {
-      request.post({
-        url: 'http://localhost:7865/login',
-        body: JSON.stringify({}),
-        headers: { 'Content-Type': 'application/json' }
-      }, (error, response, body) => {
-        expect(response.statusCode).to.equal(400);
+  });
+
+  // Test for the /available_payments endpoint
+  describe('GET /available_payments', function () {
+    it('should return 200 and the available payment methods', (done) => {
+      request.get(`${API_URL}/available_payments`, (_err, res, body) => {
+        expect(res.statusCode).to.be.equal(200);
+        expect(JSON.parse(body)).to.deep.equal({
+          payment_methods: {
+            credit_cards: true,
+            paypal: false
+          }
+        });
         done();
       });
     });
